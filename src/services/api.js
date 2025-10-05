@@ -1,4 +1,4 @@
-const API_URL = 'https://music-platform-backend-qru3.onrender.com';
+const API_URL = 'https://music-platform-backend-qru3.onrender.com/api';
 
 // Helper function for API calls
 const apiRequest = async (endpoint, options = {}) => {

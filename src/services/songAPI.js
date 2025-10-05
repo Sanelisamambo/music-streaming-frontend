@@ -1,6 +1,6 @@
 import { getAuthToken } from './api';
 
-const API_URL = 'https://music-platform-backend-qru3.onrender.com';
+const API_URL = 'https://music-platform-backend-qru3.onrender.com/api';
 
 // Song API functions
 export const songAPI = {
