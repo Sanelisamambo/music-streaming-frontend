@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         try {
           // Verify token with backend and get real user data
-          const response = await fetch('https://music-platform-backend-qru3.onrender.com/api/auth/me', {
+          const response = await fetch('https://music-platform-backend-qru3.onrender.com/api/auth/login', {
             headers: {
               'Authorization': `Bearer ${token}`,
             },
