@@ -26,7 +26,7 @@ const apiRequest = async (endpoint, options = {}) => {
   } catch (error) {
     // More specific error messages
     if (error.name === 'TypeError' && error.message.includes('fetch')) {
-      throw new Error('Cannot connect to server. Make sure the backend is running on port 5000.');
+       throw new Error('Cannot connect to server. Please check your internet connection.');
     }
     throw error;
   }
