@@ -100,7 +100,7 @@ const Songs = () => {
 
   const handlePlay = async (song) => {
     try {
-      const audioUrl = `http://localhost:5000${song.fileUrl}`;
+      const audioUrl = `https://music-platform-backend-qru3.onrender.com${song.fileUrl}`;
       
       // If clicking the same song that's currently playing, toggle pause/play
       if (playingSong && playingSong.id === song._id) {
@@ -141,7 +141,7 @@ const Songs = () => {
       setPlayingSong({ id: song._id, audio, isPlaying: true });
       
       // Increment play count in backend
-      await fetch(`http://localhost:5000/api/songs/${song._id}/play`, {
+      await fetch(`https://music-platform-backend-qru3.onrender.com/api/songs/${song._id}/play`, {
         method: 'POST'
       });
       
@@ -153,11 +153,11 @@ const Songs = () => {
 
   const handleDownload = async (song) => {
     try {
-      await fetch(`http://localhost:5000/api/songs/${song._id}/download`, {
+      await fetch(`https://music-platform-backend-qru3.onrender.com/api/songs/${song._id}/download`, {
         method: 'POST'
       });
       
-      const downloadUrl = `http://localhost:5000${song.fileUrl}`;
+      const downloadUrl = `https://music-platform-backend-qru3.onrender.com${song.fileUrl}`;
       const link = document.createElement('a');
       link.href = downloadUrl;
       link.download = song.fileName || 'exclusive-solo-track';
@@ -177,7 +177,7 @@ const handleDelete = async (songId) => {
     const token = localStorage.getItem('authToken');
     
     // Use the admin delete endpoint
-    const response = await fetch(`http://localhost:5000/api/songs/${songId}`, {
+    const response = await fetch(`https://music-platform-backend-qru3.onrender.com/api/songs/${songId}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -348,7 +348,7 @@ const isSongOwner = (song) => {
                   >
                     {song.coverArtUrl ? (
                       <img 
-                        src={`http://localhost:5000${song.coverArtUrl}`} 
+                        src={`https://music-platform-backend-qru3.onrender.com${song.coverArtUrl}`} 
                         alt={song.title}
                         className="cover-image"
                       />
