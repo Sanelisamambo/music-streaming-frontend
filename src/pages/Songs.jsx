@@ -98,78 +98,82 @@ const Songs = () => {
     return `linear-gradient(135deg, ${colorPair[0]}, ${colorPair[1]})`;
   };
 
-  const handlePlay = async (song) => {
-    try {
-      const audioUrl = `https://music-platform-backend-qru3.onrender.com${song.fileUrl}`;
-      
-      // If clicking the same song that's currently playing, toggle pause/play
-      if (playingSong && playingSong.id === song._id) {
-        if (audioRef.current.paused) {
-          await audioRef.current.play();
-          setPlayingSong({ ...playingSong, isPlaying: true });
-        } else {
-          audioRef.current.pause();
-          setPlayingSong({ ...playingSong, isPlaying: false });
-        }
-        return;
-      }
-      
-      // If a different song is playing, stop it first
-      if (audioRef.current) {
+const handlePlay = async (song) => {
+  try {
+    // ✅ FIX: Use Cloudinary URL directly (no backend URL prepending)
+    const audioUrl = song.fileUrl;
+    console.log('Playing from URL:', audioUrl);
+    
+    // If clicking the same song that's currently playing, toggle pause/play
+    if (playingSong && playingSong.id === song._id) {
+      if (audioRef.current.paused) {
+        await audioRef.current.play();
+        setPlayingSong({ ...playingSong, isPlaying: true });
+      } else {
         audioRef.current.pause();
-        audioRef.current = null;
+        setPlayingSong({ ...playingSong, isPlaying: false });
       }
-      
-      // Create new audio instance
-      const audio = new Audio(audioUrl);
-      audioRef.current = audio;
-      
-      // Set up event listeners for the audio
-      audio.addEventListener('ended', () => {
-        setPlayingSong(null);
-        audioRef.current = null;
-      });
-      
-      audio.addEventListener('error', () => {
-        setError('Failed to play audio');
-        setPlayingSong(null);
-        audioRef.current = null;
-      });
-      
-      // Play the new song
-      await audio.play();
-      setPlayingSong({ id: song._id, audio, isPlaying: true });
-      
-      // Increment play count in backend
-      await fetch(`https://music-platform-backend-qru3.onrender.com/api/songs/${song._id}/play`, {
-        method: 'POST'
-      });
-      
-    } catch (err) {
-      setError('Failed to play track');
-      console.error('Play error:', err);
+      return;
     }
-  };
+    
+    // If a different song is playing, stop it first
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+    
+    // Create new audio instance
+    const audio = new Audio(audioUrl);
+    audioRef.current = audio;
+    
+    // Set up event listeners for the audio
+    audio.addEventListener('ended', () => {
+      setPlayingSong(null);
+      audioRef.current = null;
+    });
+    
+    audio.addEventListener('error', (e) => {
+      console.error('Audio element error:', e);
+      setError('Failed to play audio. The file may be corrupted or unavailable.');
+      setPlayingSong(null);
+      audioRef.current = null;
+    });
+    
+    // Play the new song
+    await audio.play();
+    setPlayingSong({ id: song._id, audio, isPlaying: true });
+    
+    // Increment play count in backend
+    await fetch(`https://music-platform-backend-qru3.onrender.com/api/songs/${song._id}/play`, {
+      method: 'POST'
+    });
+    
+  } catch (err) {
+    setError('Failed to play track');
+    console.error('Play error:', err);
+  }
+};
 
   const handleDownload = async (song) => {
-    try {
-      await fetch(`https://music-platform-backend-qru3.onrender.com/api/songs/${song._id}/download`, {
-        method: 'POST'
-      });
-      
-      const downloadUrl = `https://music-platform-backend-qru3.onrender.com${song.fileUrl}`;
-      const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.download = song.fileName || 'exclusive-solo-track';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-    } catch (err) {
-      setError('Download failed');
-    }
-  };
-
+  try {
+    await fetch(`https://music-platform-backend-qru3.onrender.com/api/songs/${song._id}/download`, {
+      method: 'POST'
+    });
+    
+    // ✅ FIX: Use Cloudinary URL directly for download
+    const downloadUrl = song.fileUrl;
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = song.fileName || 'exclusive-solo-track';
+    link.target = '_blank'; // Open in new tab for Cloudinary
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+  } catch (err) {
+    setError('Download failed');
+  }
+};
  // In your Songs.jsx, replace the handleDelete function with this:
 
 const handleDelete = async (songId) => {
